@@ -6,11 +6,30 @@
 /*   By: mabimich <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/22 17:28:34 by mabimich          #+#    #+#             */
-/*   Updated: 2022/08/07 19:27:08 by manuel           ###   ########.fr       */
+/*   Updated: 2022/08/09 00:02:29 by mabimich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
+
+void	ft_dup(t_data *data, int i)
+{
+	if (i == 0)
+	{
+		dup2(data->file[0], STDIN_FILENO);
+		dup2(data->vanne[(i * 2) + 1], STDOUT_FILENO);
+	}
+	else if (i == data->n_child - 1)
+	{
+		dup2(data->vanne[(i * 2) - 2], STDIN_FILENO);
+		dup2(data->file[1], STDOUT_FILENO);
+	}
+	else
+	{
+		dup2(data->vanne[(i * 2) - 2], STDIN_FILENO);
+		dup2(data->vanne[(i * 2) + 1], STDOUT_FILENO);
+	}
+}
 
 void	open_files(t_data *data)
 {
@@ -29,8 +48,6 @@ void	open_files(t_data *data)
 	}
 	else
 		data->file[0] = open(data->argv[1], O_RDONLY);
-	if (data->file[0] == -1)
-		dispatch_exit(data, 5);
 	data->file[1] = open(data->argv[data->n_child + 2 + data->here_doc],
 			O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (data->file[1] == -1)
@@ -44,21 +61,15 @@ void	child(t_data *data, char **envp, int i)
 {
 	char	**argv;
 
-	if (i == 0)
-	{
-		dup2(data->file[0], STDIN_FILENO);
-		dup2(data->vanne[(i * 2) + 1], STDOUT_FILENO);
-	}
-	else if (i == data->n_child - 1)
-	{
-		dup2(data->vanne[(i * 2) - 2], STDIN_FILENO);
-		dup2(data->file[1], STDOUT_FILENO);
-	}
-	else
-	{
-		dup2(data->vanne[(i * 2) - 2], STDIN_FILENO);
-		dup2(data->vanne[(i * 2) + 1], STDOUT_FILENO);
-	}
+	if ((data->file[1] == -1) && i == (data->n_child - 1))
+		dispatch_exit(data, 777);
+	if (((data->file[0] == -1) && i == 0))
+		dispatch_exit(data, 777);
+	ft_dup(data, i);
+	if (data->file[0] != -1)
+		close(data->file[0]);
+	if (data->file[1] != -1)
+		close(data->file[1]);
 	close_pipes(data, -1);
 	argv = ft_split(data->argv[i + 2 + data->here_doc], ' ');
 	if (data->path[i] && argv)

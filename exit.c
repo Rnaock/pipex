@@ -6,7 +6,7 @@
 /*   By: mabimich <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/05 19:57:43 by mabimich          #+#    #+#             */
-/*   Updated: 2022/08/08 21:51:33 by mabimich         ###   ########.fr       */
+/*   Updated: 2022/08/08 23:58:38 by mabimich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,9 +34,9 @@ void	dispatch_exit2(t_data *data, int code)
 			ft_putstr_fd(data->argv[data->n_child + 2 + data->here_doc], 2);
 		ft_putchar_fd('\n', 2);
 	}
-	if (code > 6)
+	if (code > 6 && data->file[1] != -1)
 		close(data->file[1]);
-	if (code > 5)
+	if (code > 5 && data->file[0] != -1)
 		close(data->file[0]);
 	if (code > 3)
 		ft_free_tab_str(data->path, data->n_child);
@@ -66,7 +66,7 @@ void	dispatch_exit(t_data *data, int code)
 		unlink(data->hd_file);
 		free(data->hd_file);
 	}
-	if (code == 777)
+	if (code == 777 || code == 127)
 	{
 		close_pipes(data, -1);
 		while (++i < data->n_child && data->pid[i])
