@@ -6,7 +6,7 @@
 /*   By: mabimich <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/05 19:21:19 by mabimich          #+#    #+#             */
-/*   Updated: 2022/08/05 19:21:25 by mabimich         ###   ########.fr       */
+/*   Updated: 2022/08/08 21:50:42 by mabimich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ char	*get_path(char *cmd, char **envp, t_data *data)
 	while (envp && envp[++i])
 		if (!ft_strncmp(envp[i], "PATH=", 5))
 			break ;
-	if (ft_strncmp(envp[i], "PATH=", 5))
+	if (!envp || !envp[i] || ft_strncmp(envp[i], "PATH=", 5))
 		dispatch_exit(data, 4);
 	cmd = ft_pick(cmd, ' ', 0);
 	tmp = ft_pick(envp[i], '=', 1);
