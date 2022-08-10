@@ -6,7 +6,7 @@
 /*   By: mabimich <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/05 19:21:44 by mabimich          #+#    #+#             */
-/*   Updated: 2022/08/07 17:34:27 by manuel           ###   ########.fr       */
+/*   Updated: 2022/08/10 23:48:11 by mabimich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 // Il ne faut donc pas envoyer de tableau bien assigné.
 // Si str existe, il le free aussi
 
-void	free_tab_with_1blank(t_data *data, char **tab, char *str)
+void	free_tab_with_1blank(char **tab, char *str)
 {
 	size_t	i;
 
@@ -30,5 +30,4 @@ void	free_tab_with_1blank(t_data *data, char **tab, char *str)
 	free(tab);
 	if (str)
 		free(str);
-	dispatch_exit(data, 4);
 }

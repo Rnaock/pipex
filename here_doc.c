@@ -6,7 +6,7 @@
 /*   By: mabimich <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/05 19:20:52 by mabimich          #+#    #+#             */
-/*   Updated: 2022/08/07 18:04:17 by manuel           ###   ########.fr       */
+/*   Updated: 2022/08/10 23:41:44 by mabimich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,4 @@ void	here_doc(t_data *data)
 		free(tmp);
 	if (ret)
 		free(ret);
-	if (len == -1)
-		dispatch_exit(data, 5);
 }

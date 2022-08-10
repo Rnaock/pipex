@@ -6,7 +6,7 @@
 /*   By: mabimich <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/22 17:28:34 by mabimich          #+#    #+#             */
-/*   Updated: 2022/08/10 00:01:15 by mabimich         ###   ########.fr       */
+/*   Updated: 2022/08/10 23:59:50 by mabimich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,10 @@ void	ft_dup(t_data *data, int i)
 	if (i == 0)
 	{
 		if (data->file[0] == -1)
-			ft_msg(data->argv[1]);
+		{
+			ft_msg(data->argv[1 + data->here_doc]);
+			dispatch_exit(data, 555);
+		}
 		dup2(data->file[0], STDIN_FILENO);
 		dup2(data->vanne[(i * 2) + 1], STDOUT_FILENO);
 	}
@@ -47,9 +50,8 @@ void	open_files(t_data *data)
 	{
 		data->hd_file = ft_create_fname(NAME_TMP_FILE);
 		data->file[0] = open(data->hd_file, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-		if (data->file[0] == -1)
-			dispatch_exit(data, 5);
-		here_doc(data);
+		if (data->file[0] != -1)
+			here_doc(data);
 		close(data->file[0]);
 		data->file[0] = open(data->hd_file, O_RDONLY);
 	}
@@ -106,7 +108,7 @@ t_data	*init(int argc, char **argv, char **envp)
 	{
 		if (!argv[i + 2 + data->here_doc])
 			dispatch_exit(data, 3);
-		data->path[i] = get_path(argv[i + 2 + data->here_doc], envp, data);
+		data->path[i] = get_path(argv[i + 2 + data->here_doc], envp);
 	}
 	return (open_files(data), data);
 }
@@ -133,3 +135,10 @@ int	main(int ac, char **av, char **envp)
 	dispatch_exit(data, 777);
 	return (0);
 }
+
+// en faisant :
+// unset = path
+// ./pipex_bonus here_doc STOP cat cat outfile
+//
+// on a 2 affichage d'erreur en trop "Error: Bad file descriptor"
+// Comment check les leak si no path?

@@ -6,7 +6,7 @@
 /*   By: mabimich <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/22 17:28:34 by mabimich          #+#    #+#             */
-/*   Updated: 2022/08/10 00:02:46 by mabimich         ###   ########.fr       */
+/*   Updated: 2022/08/10 23:17:13 by mabimich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,10 @@ void	ft_dup(t_data *data, int i)
 	if (i == 0)
 	{
 		if (data->file[0] == -1)
+		{
 			ft_msg(data->argv[1]);
+			dispatch_exit(data, 555);
+		}
 		dup2(data->file[0], STDIN_FILENO);
 		dup2(data->vanne[(i * 2) + 1], STDOUT_FILENO);
 	}

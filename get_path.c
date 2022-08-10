@@ -6,7 +6,7 @@
 /*   By: mabimich <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/05 19:21:19 by mabimich          #+#    #+#             */
-/*   Updated: 2022/08/08 21:50:42 by mabimich         ###   ########.fr       */
+/*   Updated: 2022/08/10 23:54:34 by mabimich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ char	*verif_paths(char **paths, char *cmd)
 	return (out);
 }
 
-char	*get_path(char *cmd, char **envp, t_data *data)
+char	*get_path(char *cmd, char **envp)
 {
 	int		i;
 	char	*tmp;
@@ -45,7 +45,7 @@ char	*get_path(char *cmd, char **envp, t_data *data)
 		if (!ft_strncmp(envp[i], "PATH=", 5))
 			break ;
 	if (!envp || !envp[i] || ft_strncmp(envp[i], "PATH=", 5))
-		dispatch_exit(data, 4);
+		return (NULL);
 	cmd = ft_pick(cmd, ' ', 0);
 	tmp = ft_pick(envp[i], '=', 1);
 	paths = ft_split(tmp, ':');
@@ -55,7 +55,7 @@ char	*get_path(char *cmd, char **envp, t_data *data)
 	{
 		paths[i] = ft_3strjoin_free_s1(paths[i], "/", cmd);
 		if (!paths[i])
-			free_tab_with_1blank(data, paths, cmd);
+			free_tab_with_1blank(paths, cmd);
 	}
 	return (verif_paths(paths, cmd));
 }

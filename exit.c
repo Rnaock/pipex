@@ -6,7 +6,7 @@
 /*   By: mabimich <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/05 19:57:43 by mabimich          #+#    #+#             */
-/*   Updated: 2022/08/09 23:40:55 by mabimich         ###   ########.fr       */
+/*   Updated: 2022/08/10 23:19:27 by mabimich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,13 +43,13 @@ void	dispatch_exit2(t_data *data, int code)
 	if (code > 1)
 		free(data);
 	data = NULL;
+	close(0);
+	close(1);
+	close(2);
 	if (code == 127)
 		exit(code);
 	if (code == 666)
 		exit(1);
-	close(0);
-	close(1);
-	close(2);
 }
 
 void	dispatch_exit(t_data *data, int code)
@@ -59,6 +59,7 @@ void	dispatch_exit(t_data *data, int code)
 
 	status = 0;
 	i = -1;
+	fprintf(stderr, "\texit code = %d\t=> %d\n", code, getpid());
 	if (code == 0)
 		code = 7;
 	if (code >= 10 && !(code % 10))
@@ -68,10 +69,10 @@ void	dispatch_exit(t_data *data, int code)
 		unlink(data->hd_file);
 		free(data->hd_file);
 	}
-	if (code == 777)
+	if (code != 777 % 111)
 	{
 		close_pipes(data, -1);
-		while (++i < data->n_child && data->pid[i])
+		while (++i < data->n_child && data->pid[i] && code == 777)
 		{
 			if (data->pid[i] != -1)
 				waitpid(data->pid[i], &status, 0);
