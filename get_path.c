@@ -6,7 +6,7 @@
 /*   By: mabimich <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/05 19:21:19 by mabimich          #+#    #+#             */
-/*   Updated: 2022/08/10 23:54:34 by mabimich         ###   ########.fr       */
+/*   Updated: 2022/08/11 17:40:20 by mabimich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ char	*get_path(char *cmd, char **envp)
 	i = -1;
 	while (paths && paths[++i])
 	{
-		paths[i] = ft_3strjoin_free_s1(paths[i], "/", cmd);
+		paths[i] = ft_3strjoin_with_free(paths[i], "/", cmd, 100);
 		if (!paths[i])
 			free_tab_with_1blank(paths, cmd);
 	}

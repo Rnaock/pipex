@@ -6,7 +6,7 @@
 /*   By: mabimich <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/22 17:28:34 by mabimich          #+#    #+#             */
-/*   Updated: 2022/08/10 23:59:50 by mabimich         ###   ########.fr       */
+/*   Updated: 2022/08/11 18:23:35 by mabimich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,20 +17,14 @@ void	ft_dup(t_data *data, int i)
 	if (i == 0)
 	{
 		if (data->file[0] == -1)
-		{
-			ft_msg(data->argv[1 + data->here_doc]);
 			dispatch_exit(data, 555);
-		}
 		dup2(data->file[0], STDIN_FILENO);
 		dup2(data->vanne[(i * 2) + 1], STDOUT_FILENO);
 	}
 	else if (i == data->n_child - 1)
 	{
 		if (data->file[1] == -1)
-		{
-			ft_msg(data->argv[data->n_child + i + 1 + data->here_doc]);
 			dispatch_exit(data, 666);
-		}
 		dup2(data->vanne[(i * 2) - 2], STDIN_FILENO);
 		dup2(data->file[1], STDOUT_FILENO);
 	}
@@ -48,11 +42,7 @@ void	open_files(t_data *data)
 	i = -1;
 	if (data->here_doc)
 	{
-		data->hd_file = ft_create_fname(NAME_TMP_FILE);
-		data->file[0] = open(data->hd_file, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-		if (data->file[0] != -1)
-			here_doc(data);
-		close(data->file[0]);
+		here_doc(data);
 		data->file[0] = open(data->hd_file, O_RDONLY);
 	}
 	else
@@ -77,8 +67,7 @@ void	child(t_data *data, char **envp, int i)
 	argv = ft_split(data->argv[i + 2 + data->here_doc], ' ');
 	if (data->path[i] && argv)
 		execve(data->path[i], argv, envp);
-	ft_putendl_fd("Error: command not found", 2);
-	ft_msg(argv[0]);
+	ft_msg("Command not found", argv[0]);
 	if (argv)
 		ft_free_tab_str(argv, -1);
 	dispatch_exit(data, 127);
@@ -136,9 +125,4 @@ int	main(int ac, char **av, char **envp)
 	return (0);
 }
 
-// en faisant :
-// unset = path
-// ./pipex_bonus here_doc STOP cat cat outfile
-//
-// on a 2 affichage d'erreur en trop "Error: Bad file descriptor"
 // Comment check les leak si no path?
