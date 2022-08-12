@@ -6,7 +6,7 @@
 /*   By: mabimich <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/05 19:57:43 by mabimich          #+#    #+#             */
-/*   Updated: 2022/08/11 18:24:48 by mabimich         ###   ########.fr       */
+/*   Updated: 2022/08/12 18:04:57 by mabimich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	ft_msg(char *s1, char *s2)
 	tmp = ft_3strjoin_with_free("Error: ", s1, ": ", 0);
 	if (!tmp)
 		return ;
-	out = ft_2strjoin_with_free(tmp, s2, 10);
+	out = ft_3strjoin_with_free(tmp, s2, "\n", 100);
 	ft_putendl_fd(out, 2);
 	free(out);
 }
@@ -34,12 +34,8 @@ void	close_pipes(t_data *data, int e)
 		close(data->vanne[i++]);
 }
 
-void	dispatch_exit2(t_data *data, int code)
+void	dispatch_exit2(t_data *data, int code, int status)
 {
-	if (code == 555)
-		ft_msg(strerror(errno), data->argv[1 + data->here_doc]);
-	if (code == 666)
-		ft_msg(strerror(errno), data->argv[data->n_child + 1 + data->here_doc]);
 	if (code > 6 && data->file[1] != -1)
 		close(data->file[1]);
 	if (code > 5 && data->file[0] != -1)
@@ -51,10 +47,14 @@ void	dispatch_exit2(t_data *data, int code)
 	if (code > 1)
 		free(data);
 	data = NULL;
+	close(0);
+	close(1);
+	close(2);
 	if (code == 127)
 		exit(code);
 	if (code == 666)
 		exit(1);
+	exit(WEXITSTATUS(status));
 }
 
 void	dispatch_exit(t_data *data, int code)
@@ -72,16 +72,16 @@ void	dispatch_exit(t_data *data, int code)
 		unlink(data->hd_file);
 	if (data->hd_file)
 		free(data->hd_file);
-	if (code != 777 % 111)
+	if (!(code % 111))
 	{
 		close_pipes(data, -1);
-		while (++i < data->n_child && data->pid[i] && code == 777)
+		while (code == 777 && ++i < data->n_child && data->pid[i])
 			if (data->pid[i] != -1)
 				waitpid(data->pid[i], &status, 0);
 	}
-	dispatch_exit2(data, code);
-	close(0);
-	close(1);
-	close(2);
-	exit(WEXITSTATUS(status));
+	if (code == 555)
+		ft_msg(strerror(errno), data->argv[1 + data->here_doc]);
+	if (code == 666)
+		ft_msg(strerror(errno), data->argv[data->n_child + 2 + data->here_doc]);
+	dispatch_exit2(data, code, status);
 }
