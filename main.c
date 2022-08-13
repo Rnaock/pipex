@@ -6,7 +6,7 @@
 /*   By: mabimich <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/22 17:28:34 by mabimich          #+#    #+#             */
-/*   Updated: 2022/08/11 18:27:23 by mabimich         ###   ########.fr       */
+/*   Updated: 2022/08/13 18:04:32 by mabimich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,8 +87,8 @@ t_data	*init(char **argv, char **envp)
 	i = -1;
 	while (++i < data->n_child)
 	{
-		if (!argv[i + 2])
-			dispatch_exit(data, 3);
+		if (!argv[i + 2] || !argv[i + 2][0])
+			continue ;
 		data->path[i] = get_path(argv[i + 2], envp);
 	}
 	return (open_files(data), data);

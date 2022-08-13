@@ -6,7 +6,7 @@
 /*   By: mabimich <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/22 17:28:34 by mabimich          #+#    #+#             */
-/*   Updated: 2022/08/11 18:23:35 by mabimich         ###   ########.fr       */
+/*   Updated: 2022/08/13 18:12:06 by mabimich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,8 +95,8 @@ t_data	*init(int argc, char **argv, char **envp)
 	i = -1;
 	while (++i < data->n_child)
 	{
-		if (!argv[i + 2 + data->here_doc])
-			dispatch_exit(data, 3);
+		if (!argv[i + 2 + data->here_doc] || !argv[i + 2 + data->here_doc][0])
+			continue ;
 		data->path[i] = get_path(argv[i + 2 + data->here_doc], envp);
 	}
 	return (open_files(data), data);
@@ -124,5 +124,3 @@ int	main(int ac, char **av, char **envp)
 	dispatch_exit(data, 777);
 	return (0);
 }
-
-// Comment check les leak si no path?
