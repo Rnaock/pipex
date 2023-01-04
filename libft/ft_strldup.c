@@ -9,6 +9,6 @@ char	*ft_strldup(const char *src, size_t len)
 	str = (char *)ft_calloc(sizeof(*str), (l + 1));
 	if (str == NULL)
 		return (NULL);
-	str = ft_strlcpy(str, src, len);
+	ft_strlcpy(str, src, len);
 	return (str);
 }
