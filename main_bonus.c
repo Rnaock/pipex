@@ -12,6 +12,20 @@
 
 #include "pipex_bonus.h"
 
+/*
+** ft_dup : duplique les descripteurs de fichiers pour le processus enfant
+** @data : structure contenant les données du programme
+** @i : numéro du processus enfant
+**
+** Cette fonction utilise l'appel système dup2 pour dupliquer les descripteurs
+** de fichiers appropriés pour chaque processus enfant.
+** - Si i est égal à 0, cela signifie que c'est le premier processus enfant
+** - Si i est égal à data->n_child - 1, signifie que c'est le dernier enfant
+** - Dans tous les autres cas, c'est un processus enfant intermédiaire
+** Pour chaque cas, on duplique le descripteur de fichier approprié pour
+** l'entrée et la sortie standard.
+*/
+
 void	ft_dup(t_data *data, int i)
 {
 	if (i == 0)
@@ -35,6 +49,17 @@ void	ft_dup(t_data *data, int i)
 	}
 }
 
+/*
+** Open files : ouvre les fichiers de redirection pour le processus parent
+** @data : structure contenant les données du programme
+**
+** Cette fonction ouvre les fichiers de redirection pour le processus parent.
+** Si le programme doit gérer un here_doc, on appelle la fonction here_doc
+** pour créer le fichier temporaire contenant le texte à rediriger.
+** On ouvre ensuite le fichier de redirection d'entrée et de sortie.
+** Enfin, on ouvre les pipes pour les processus enfants.
+*/
+
 void	open_files(t_data *data)
 {
 	int	i;
@@ -54,6 +79,22 @@ void	open_files(t_data *data)
 			dispatch_exit(data, 10 * i);
 }
 
+/*
+** Child : fonction exécutée par chaque processus enfant
+** @data : structure contenant les données du programme
+** @envp : tableau d'environnement
+** @i : numéro du processus enfant
+**
+** Cette fonction est exécutée par chaque processus enfant.
+** On duplique les descripteurs de fichiers pour le processus enfant avec ft_dup.
+** On ferme ensuite les descripteurs de fichiers et les pipes inutiles.
+** On sépare la commande en arguments avec ft_split.
+** On exécute la commande avec execve.
+** Si la commande n'est pas trouvée, elle affiche un message d'erreur.
+** Enfin, elle appelle la fonction dispatch_exit pour quitter le programme.
+** Le code de sortie est 127 si la commande n'est pas trouvée.
+*/
+
 void	child(t_data *data, char **envp, int i)
 {
 	char	**argv;
@@ -72,6 +113,19 @@ void	child(t_data *data, char **envp, int i)
 		ft_free_tab_str(argv, -1);
 	dispatch_exit(data, 127);
 }
+
+/*
+** Init : initialise la structure data
+** @argc : nombre d'arguments
+** @argv : tableau d'arguments
+** @envp : tableau d'environnement
+**
+** Cette fonction initialise la structure data.
+** Elle alloue de la mémoire pour la structure data, les tableaux de pid_t,
+** les tableaux de strings contenant les chemins des commandes,
+** et les tableaux de string contenant les arguments des commandes.
+** Finalement, elle retourne la structure data.
+*/
 
 t_data	*init(int argc, char **argv, char **envp)
 {
@@ -101,6 +155,22 @@ t_data	*init(int argc, char **argv, char **envp)
 	}
 	return (open_files(data), data);
 }
+
+/*
+** Main : fonction principale du programme
+** @ac : nombre d'arguments
+** @av : tableau d'arguments
+** @envp : tableau d'environnement
+**
+** Cette fonction est exécutée au lancement du programme.
+** Elle vérifie le nombre d'arguments et appelle la fonction init.
+** Puis pour chaque processus enfant, elle appelle la fonction fork.
+** Si fork retourne -1, il s'agit d'une erreur et le programme s'arrête.
+** Si fork retourne 0, il s'agit du processus enfant et on appelle la fonction child.
+** Si fork retourne un pid, il s'agit du processus parent et on continue.
+** Enfin, elle appelle la fonction dispatch_exit pour quitter le programme.
+** Le code de sortie est 777 si tout s'est bien passé.
+*/
 
 int	main(int ac, char **av, char **envp)
 {

@@ -12,6 +12,16 @@
 
 #include "pipex_bonus.h"
 
+/*
+**	Here_doc
+**	@data : structure contenant les données du programme
+**
+**	Cette fonction lit sur l'entrée standard jusqu'à ce que la chaine de
+**	caractère passée en argument soit lue. La chaine de caractère est ensuite
+**	écrite dans un fichier temporaire.
+** 	Le fichier temporaire est ensuite ouvert par le processus parent.
+*/
+
 void	here_doc(t_data *data)
 {
 	char	*ret;

@@ -12,6 +12,15 @@
 
 #include "pipex.h"
 
+/*
+** verif_paths : vérifie si les chemins des commandes sont valides
+** @paths : tableau de chemins
+** @cmd : commande
+**
+** Cette fonction vérifie si les chemins des commandes sont valides.
+** Elle retourne le chemin valide, ou NULL si aucun chemin n'est valide.
+*/
+
 char	*verif_paths(char **paths, char *cmd)
 {
 	int		i;
@@ -33,6 +42,15 @@ char	*verif_paths(char **paths, char *cmd)
 		free(cmd);
 	return (out);
 }
+
+/*
+** get_path : récupère le chemin d'une commande
+** @cmd : commande
+** @envp : tableau d'environnement
+**
+** Cette fonction récupère le chemin d'une commande.
+** Elle retourne le chemin de la commande, ou NULL si le chemin n'est pas trouvé.
+*/
 
 char	*get_path(char *cmd, char **envp)
 {

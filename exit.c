@@ -12,6 +12,12 @@
 
 #include "pipex.h"
 
+/*
+** ft_msg : affiche un message d'erreur
+** @s1 : message d'erreur
+** @s2 : message d'erreur
+*/
+
 void	ft_msg(char *s1, char *s2)
 {	
 	char	*tmp;
@@ -25,6 +31,12 @@ void	ft_msg(char *s1, char *s2)
 	free(out);
 }
 
+/*
+** close_pipes : ferme les pipes
+** @data : structure de données
+** @e : le nombre de pipe à fermer (-1 pour fermer tous les pipes)
+*/
+
 void	close_pipes(t_data *data, int e)
 {
 	int	i;
@@ -33,6 +45,22 @@ void	close_pipes(t_data *data, int e)
 	while (i < (data->n_child - 1) * 2 && i != e)
 		close(data->vanne[i++]);
 }
+
+/*
+** dispatch_exit2 : libère la mémoire, quitte le programme et renvoie un code
+** @data : structure de données
+** @code : code d'erreur
+** @status : status de la commande
+**
+** Cette fonction libère la mémoire et quitte le programme.
+** Elle est appelée par dispatch_exit.
+** Elle gère les tout les codes et plus finement les codes d'erreurs suivants:
+** 8 : probleme lors de la creation d'un fork
+** 7 : probleme lors de la creation du premier pipe
+** 3 : probleme lors de l'allocation du tableau de path
+** 2 : probleme lors de l'allocation du tableau de pid
+** 1 : probleme lors de l'allocation de la structure de données
+*/
 
 void	dispatch_exit2(t_data *data, int code, int status)
 {
@@ -56,6 +84,22 @@ void	dispatch_exit2(t_data *data, int code, int status)
 		exit(1);
 	exit(WEXITSTATUS(status));
 }
+
+/*
+** dispatch_exit : libère la mémoire, quitte le programme et renvoie un code
+** @data : structure de données
+** @code : code d'erreur
+**
+** Elle fait passer le code d'erreur à 7 si le premier pipe n'a pas pu être créé.
+** Elle supprime le fichier temporaire du here_doc si il existe.
+** Elle gere les codes d'erreurs suivants :
+** i * 10 : Le pipe n°i n'a pas pu être créé, on ferme les pipes précédents
+** 555 : Le fichier d'entrée n'a pas pu être ouvert
+** 666 : Le fichier de sortie n'a pas pu être ouvert
+** 777 : Aucun problème, on ferme tous les pipes et on attend les fils
+** 127 : probleme lors de l'execution d'un processus fils
+** On appelle dispatch_exit2 pour gerer les autres codes d'erreurs.
+*/
 
 void	dispatch_exit(t_data *data, int code)
 {
